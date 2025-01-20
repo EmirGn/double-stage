@@ -1,6 +1,10 @@
+use actix_cors::Cors;
 use actix_web::{web, App, HttpResponse, HttpServer, Responder};
-mod create_api;
-use create_api::create_gemini_api_post;
+
+mod api_request;
+use api_request::create_gemini_api_post;
+
+mod rr_json;
 
 async fn use_gemini_api_post_function(req_body: String) -> impl Responder {
     match create_gemini_api_post(req_body).await {
@@ -15,19 +19,35 @@ async fn use_gemini_api_post_function(req_body: String) -> impl Responder {
     }
 }
 
+#[actix_web::get("/")]
+async fn hello_there() -> impl Responder {
+    HttpResponse::Ok().body("hi there")
+}
+
 async fn gemini_route_status() -> impl Responder {
     HttpResponse::Ok()
-        .body("The route is available start with going to /gemini address and make a post request.")
+        .body("The route is available. Start with going to /gemini address and make a post request.")
 }
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
+    println!("The server is started at: 127.0.0.1:5000");
     HttpServer::new(|| {
-        App::new().service(
-            web::scope("/gemini")
-                .route("/", web::get().to(gemini_route_status))
-                .route("/", web::post().to(use_gemini_api_post_function)),
-        )
+        App::new()
+            .wrap(
+                Cors::default()
+                .allow_any_origin()
+                .allowed_methods(vec!["GET", "POST"])
+                .allowed_headers(vec!["Authorization", "Accept"])
+                .allowed_header("content-type")
+                .max_age(3600)
+            )
+            .service(
+                web::scope("/gemini")
+                    .route("/", web::get().to(gemini_route_status))
+                    .route("/", web::post().to(use_gemini_api_post_function)),
+            )
+            .service(hello_there)
     })
     .bind(("127.0.0.1", 5000))?
     .run()

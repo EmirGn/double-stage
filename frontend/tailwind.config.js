@@ -5,7 +5,7 @@ export default {
   theme: {
     extend: {
       backgroundColor: {
-        black: "#252426",
+        black: "#1B1B1B",
       },
       fontFamily: {
         outfit: ["Outfit", "sans-serif"],
