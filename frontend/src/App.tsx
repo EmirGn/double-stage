@@ -1,8 +1,15 @@
 import "./App.css";
 import Sidebar from "./components/Sidebar";
 import Welcome from "./components/Welcome";
+import Chat from "./components/Chat";
+
+import { useState } from "react";
+import { useParams, useNavigate } from "react-router";
 
 export default function App() {
+  const params = useParams();
+  const navigate = useNavigate();
+  const [responseText, setResponseText] = useState("");
 
   const handlePostData = async (inputValue: string) => {
     try {
@@ -17,7 +24,7 @@ export default function App() {
         throw new Error("Network response was not ok.");
       }
       const data = await response.text();
-      console.log(data);
+      setResponseText(data);
     } catch (error) {
       console.error("Error: ", error);
     }
@@ -29,7 +36,11 @@ export default function App() {
         <Sidebar />
       </div>
       <div className="flex-1">
-        <Welcome clickHandler={handlePostData}/>
+        {params.id ? (
+          <Chat />
+        ) : (
+          <Welcome clickHandler={handlePostData} />
+        )}
       </div>
     </div>
   );

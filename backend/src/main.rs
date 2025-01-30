@@ -7,6 +7,8 @@ use api_request::create_gemini_api_post;
 mod rr_json;
 use rr_json::Response;
 
+mod database;
+
 async fn use_gemini_api_post_function(req_body: String) -> impl Responder {
     match create_gemini_api_post(req_body).await {
         Ok(response) => {
@@ -49,7 +51,7 @@ async fn gemini_route_status() -> impl Responder {
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     println!("The server is started at: 127.0.0.1:5000");
-    HttpServer::new(|| {
+    HttpServer::new(move || {
         App::new()
             .wrap(
                 Cors::default()

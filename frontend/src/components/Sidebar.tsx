@@ -1,12 +1,41 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router";
+import { v4 as uuidv4 } from "uuid";
+
+interface Chat {
+  id: string
+  name: string
+}
+
 export default function Sidebar() {
-  const [latestChat, setLatestChat] = useState<string[]>([]);
+  const [latestChat, setLatestChat] = useState<Chat[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
+  
   const handleClick = () => {
-    setLatestChat([...latestChat, `Chat ${currentIndex + 1}`]);
+    const newChat = {
+      id: uuidv4(),
+      name: `Chat ${currentIndex + 1}`,
+    }
+
+    setLatestChat([...latestChat, newChat]);
     setCurrentIndex(currentIndex + 1);
   };
+
+  useEffect(() => {
+    const fetchChats = async () => {
+      try {
+        const response = await fetch('/api/chats');
+        const data = await response.json();
+        setLatestChat(data);
+        setCurrentIndex(data.length);
+      } catch (error) {
+        console.error('Error fetching chats:', error);
+      }
+    };
+
+    fetchChats();
+  }, []);
+
   return (
     <div className="w-[280px]">
       <nav
@@ -35,13 +64,13 @@ export default function Sidebar() {
             latest chats:
           </p>
           <div className="flex flex-col gap-4">
-            {latestChat.map((chat, index) => (
+            {latestChat.map((chat) => (
               <Link
-                key={index}
-                to={`/${index + 1}`}
+                key={chat.id}
+                to={`/c/${chat.id}`}
                 className="p-2 mx-2 rounded-lg hover:bg-text_black"
               >
-                {chat}
+                {chat.name}
               </Link>
             ))}
           </div>
