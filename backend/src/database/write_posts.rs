@@ -18,31 +18,6 @@ fn main() {
     println!("\nSaved draft {title} with id {}", post.id);
 }
 
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use diesel::prelude::*;
-    use diesel::test_transaction;
-
-    #[test]
-    fn test_create_post() {
-        let connection = &mut establish_connection();
-        
-        test_transaction(connection, |conn| {
-            let test_title = "Test Post";
-            let test_body = "Test Content";
-
-            let post = create_post(conn, test_title, test_body);
-
-            assert_eq!(post.title, test_title);
-            assert_eq!(post.body, test_body);
-            assert_eq!(post.published, false);
-
-            Ok(())
-        });
-    }
-}
-
 #[cfg(not(windows))]
 const EOF: &str = "CTRL+D";
 

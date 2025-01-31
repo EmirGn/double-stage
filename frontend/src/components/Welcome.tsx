@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router";
 
 interface WelcomeProps {
-  clickHandler: (inputValue: string) => void;
+  clickHandler: (inputValue: string, chat_id: string) => void;
 }
 
 export default function Welcome({ clickHandler }: WelcomeProps) {
@@ -16,9 +16,9 @@ export default function Welcome({ clickHandler }: WelcomeProps) {
   };
 
   const handleSubmit = () => {
-    clickHandler(inputValue);
     const newChatId = uuidv4();
     navigate(`/${newChatId}`);
+    clickHandler(inputValue, newChatId);
   };
 
   return (

@@ -2,7 +2,7 @@ use reqwest::Client;
 use dotenv::dotenv;
 use std::env;
 
-pub async fn create_gemini_api_post(user_prompt: String) -> Result<reqwest::Response, Box<dyn std::error::Error>> {
+pub async fn create_gemini_api_post(user_prompt: &String) -> Result<reqwest::Response, Box<dyn std::error::Error>> {
   
   dotenv().ok();
 
@@ -27,7 +27,7 @@ pub async fn create_gemini_api_post(user_prompt: String) -> Result<reqwest::Resp
   let res = client
     .post(&base_url)
     .header("Content-Type", "application/json")
-    .body(body_template_parser(user_prompt))
+    .body(body_template_parser(user_prompt.to_string()))
     .send()
     .await?;
   Ok(res)

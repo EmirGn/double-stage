@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Link } from "react-router";
 import { v4 as uuidv4 } from "uuid";
 
@@ -21,20 +21,20 @@ export default function Sidebar() {
     setCurrentIndex(currentIndex + 1);
   };
 
-  useEffect(() => {
-    const fetchChats = async () => {
-      try {
-        const response = await fetch('/api/chats');
-        const data = await response.json();
-        setLatestChat(data);
-        setCurrentIndex(data.length);
-      } catch (error) {
-        console.error('Error fetching chats:', error);
-      }
-    };
+  // useEffect(() => {
+  //   const fetchChats = async () => {
+  //     try {
+  //       const response = await fetch('/api/chats');
+  //       const data = await response.json();
+  //       setLatestChat(data);
+  //       setCurrentIndex(data.length);
+  //     } catch (error) {
+  //       console.error('Error fetching chats:', error);
+  //     }
+  //   };
 
-    fetchChats();
-  }, []);
+  //   fetchChats();
+  // }, []);
 
   return (
     <div className="w-[280px]">

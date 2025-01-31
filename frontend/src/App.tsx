@@ -3,28 +3,28 @@ import Sidebar from "./components/Sidebar";
 import Welcome from "./components/Welcome";
 import Chat from "./components/Chat";
 
-import { useState } from "react";
-import { useParams, useNavigate } from "react-router";
+// import { useState } from "react";
+import { useParams } from "react-router";
 
 export default function App() {
   const params = useParams();
-  const navigate = useNavigate();
-  const [responseText, setResponseText] = useState("");
+  // const [responseText, setResponseText] = useState("");
 
-  const handlePostData = async (inputValue: string) => {
+  const handlePostData = async (input_value: string, chat_id: string) => {
     try {
-      const response = await fetch("http://127.0.0.1:5000/gemini/", {
+      const payload = { input_value, chat_id };
+      const response = await fetch("http://127.0.0.1:5000/c", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: inputValue,
+        body: JSON.stringify(payload),
       });
       if (!response.ok) {
         throw new Error("Network response was not ok.");
       }
       const data = await response.text();
-      setResponseText(data);
+      console.log(data);
     } catch (error) {
       console.error("Error: ", error);
     }
