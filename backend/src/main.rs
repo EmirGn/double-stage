@@ -1,5 +1,5 @@
 use actix_cors::Cors;
-use actix_web::{web, App, HttpResponse, HttpServer, Responder};
+use actix_web::{body::None, web, App, HttpResponse, HttpServer, Responder};
 use serde::Deserialize;
 use serde_json;
 
@@ -10,7 +10,7 @@ mod rr_json;
 use rr_json::Response;
 
 mod database;
-use database::{create_chat, create_user, establish_connection};
+use database::{create_chat, establish_connection, show_chats};
 
 #[derive(Deserialize)]
 struct CreateChatPayload {
@@ -18,7 +18,8 @@ struct CreateChatPayload {
     chat_id: String
 }
 
-async fn use_gemini_api_post_function(req_body: &String) -> Result<String, Box<dyn std::error::Error>>{
+#[allow(unused_variables)]
+async fn use_gemini_api_post_function(req_body: &String) -> Result<String, None>{
     let mut real_message = String::new();
     match create_gemini_api_post(req_body).await {
         Ok(response) => {
@@ -54,24 +55,17 @@ async fn hello_there() -> impl Responder {
     HttpResponse::Ok().body("WELCOME TO ADMIN PANEL.")
 }
 
-async fn gemini_route_status() -> impl Responder {
-    HttpResponse::Ok()
-        .body("The route is available. Start with going to /gemini address and make a post request.")
-}
-
-
 #[actix_web::get("/c")]
 async fn get_all_chat_history() -> impl Responder {
-    // Database operations for fetching chat history for the user | useEffect
+    let connection = &mut establish_connection();
+    let chat_titles = show_chats(connection, None).unwrap();
     HttpResponse::Ok()
-        .body("Chat history is fetched.")
+        .json(chat_titles)
 }
 
-#[actix_web::get("/c/{id}")]
-async fn get_unit_chat_history(_chat_id: web::Path<String>) -> impl Responder {
-    // Database operations for fetching the data about selected chat on sidebar.
+async fn _get_unit_chat_history() -> impl Responder {
     HttpResponse::Ok()
-        .body("Selected chat history is fetched.")
+        .body("Hi")
 }
 
 #[actix_web::patch("/c/{id}")]
@@ -116,6 +110,7 @@ async fn main() -> std::io::Result<()> {
             )
             .service(hello_there)
             .service(create_new_chat)
+            .service(get_all_chat_history)
     })
     .bind(("127.0.0.1", 5000))?
     .run()
