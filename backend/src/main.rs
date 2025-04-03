@@ -11,8 +11,7 @@ use rr_json::Response;
 
 mod database;
 use database::{
-    create_new_chat_handler_database, establish_connection, get_all_chat_history_handler_database,
-    get_unit_chat_history_handler_database, update_unit_chat_history_handler_database, delete_chat_handler_database
+    create_new_chat_handler_database, delete_chat_handler_database, establish_connection, get_all_chat_history_handler_database, get_unit_chat_history_handler_database, schema::chats, update_unit_chat_history_handler_database
 };
 
 #[derive(Deserialize)]
@@ -65,10 +64,14 @@ async fn hello_there() -> impl Responder {
 
 #[actix_web::get("/c")]
 async fn get_all_chat_history() -> impl Responder {
+    let chat_instances: Vec<CreateChatPayload> = Vec::new();
+
+
+
     let connection = &mut establish_connection();
-    let chat_titles = get_all_chat_history_handler_database(connection, None).unwrap();
+    let chats = get_all_chat_history_handler_database(connection, None).unwrap();
     HttpResponse::Ok()
-        .json(chat_titles)
+        .json(chats)
 }
 
 #[actix_web::post("/c")]

@@ -8,7 +8,7 @@ import { useParams } from "react-router";
 
 export default function App() {
   const params = useParams();
-  // const [responseText, setResponseText] = useState("");
+  const [responseText, setResponseText] = useState("");
 
   const handlePostData = async (input_value: string, chat_id: string) => {
     try {
